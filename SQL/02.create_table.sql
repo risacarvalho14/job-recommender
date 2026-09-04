@@ -13,17 +13,18 @@ CREATE TABLE jobs_raw (
 );
 GO
 
-BULK INSERT jobs_raw
-FROM 'C:\Users\carva\OneDrive\Desktop\Risa Data Projects\job-recommender\data\messy_jobs_raw.csv'
-WITH (
-    FORMAT = 'CSV',
-    FIRSTROW = 2,
-    FIELDQUOTE = '"',
-    FIELDTERMINATOR = ',',
-    ROWTERMINATOR = '0x0a',
-    CODEPAGE = '65001',
-    TABLOCK
+DROP TABLE IF EXISTS jobs;
+GO
+
+CREATE TABLE jobs (
+    job_id INT PRIMARY KEY,
+    title VARCHAR(255),
+    company VARCHAR(255),
+    company_context VARCHAR(255),
+    location VARCHAR(255),
+    description VARCHAR(1000),
+    required_skills VARCHAR(500),
+    source_url VARCHAR(500)
 );
 GO
 
-SELECT COUNT(*) AS total_rows FROM jobs_raw;

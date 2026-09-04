@@ -78,3 +78,39 @@ SELECT
     company,
     ISNULL(company, 'Unknown') AS company_no_null
 FROM jobs_raw;
+
+--Problem 12: jobs_raw contains 3 duplicate job_id values (3, 16, 29), each 
+-- appearing twice. Since job_id is the PRIMARY KEY in the final `jobs` table, 
+-- inserting these duplicates causes a constraint violation and rejects the 
+-- entire INSERT. 
+
+TRUNCATE TABLE jobs;
+
+WITH ranked_jobs AS (
+    SELECT 
+        *,
+        ROW_NUMBER() OVER (PARTITION BY job_id ORDER BY CAST(row_num AS INT)) AS rn
+    FROM jobs_raw
+)
+INSERT INTO jobs (job_id, title, company, company_context, location, description, required_skills, source_url)
+SELECT
+    CAST(job_id AS INT),
+    TRIM(title),
+    CASE 
+        WHEN CHARINDEX('(', company) > 0 
+            THEN TRIM(LEFT(company, CHARINDEX('(', company) - 1))
+        ELSE ISNULL(company, 'Unknown')
+    END,
+    CASE 
+        WHEN CHARINDEX('(', company) > 0 
+            THEN SUBSTRING(company, CHARINDEX('(', company) + 1, CHARINDEX(')', company) - CHARINDEX('(', company) - 1)
+        ELSE NULL
+    END,
+    ISNULL(UPPER(TRIM(location)), 'Unknown'),
+    description,
+    REPLACE(required_skills, ';', ','),
+    source_url
+FROM ranked_jobs
+WHERE rn = 1;
+
+select * from jobs;
