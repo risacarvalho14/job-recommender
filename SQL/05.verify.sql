@@ -15,3 +15,12 @@ SELECT job_id, COUNT(*) AS occurrences
 FROM jobs
 GROUP BY job_id
 HAVING COUNT(*) > 1;
+
+--check for that one job posting not having any mentioned skill
+SELECT job_id, title, required_skills
+FROM jobs
+WHERE required_skills NOT LIKE '%SQL%'
+  AND required_skills NOT LIKE '%Python%'
+  AND required_skills NOT LIKE '%Power BI%'
+  AND required_skills NOT LIKE '%Data Visualization%'
+  AND required_skills NOT LIKE '%Excel%';

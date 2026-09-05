@@ -8,3 +8,15 @@ SELECT TOP 10
     AS match_score
 FROM jobs
 ORDER BY match_score DESC;
+
+-- Problem 2: Given a sample Portfolii user with skills Power BI, Excel,
+-- rank all jobs in the dataset by how many of those required skills each job matches.
+SELECT TOP 10
+    job_id, title, required_skills,
+    (CASE WHEN required_skills LIKE '%Power BI%' THEN 1 ELSE 0 END) +
+    (CASE WHEN required_skills LIKE '%Excel%' THEN 1 ELSE 0 END)
+    AS match_score
+FROM jobs
+ORDER BY match_score DESC;
+
+
